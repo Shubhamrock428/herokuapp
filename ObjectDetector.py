@@ -2,33 +2,35 @@ import cv2 as cv
 import numpy
 
 
-classNames = {0: 'background',
-              1: 'person', 2: 'bicycle', 3: 'car', 4: 'motorcycle', 5: 'airplane', 6: 'bus',
-              7: 'train', 8: 'truck', 9: 'boat', 10: 'traffic light', 11: 'fire hydrant',
-              13: 'stop sign', 14: 'parking meter', 15: 'bench', 16: 'bird', 17: 'cat',
-              18: 'dog', 19: 'horse', 20: 'sheep', 21: 'cow', 22: 'elephant', 23: 'bear',
-              24: 'zebra', 25: 'giraffe', 27: 'backpack', 28: 'umbrella', 31: 'handbag',
-              32: 'tie', 33: 'suitcase', 34: 'frisbee', 35: 'skis', 36: 'snowboard',
-              37: 'sports ball', 38: 'kite', 39: 'baseball bat', 40: 'baseball glove',
-              41: 'skateboard', 42: 'surfboard', 43: 'tennis racket', 44: 'bottle',
-              46: 'wine glass', 47: 'cup', 48: 'fork', 49: 'knife', 50: 'spoon',
-              51: 'bowl', 52: 'banana', 53: 'apple', 54: 'sandwich', 55: 'orange',
-              56: 'broccoli', 57: 'carrot', 58: 'hot dog', 59: 'pizza', 60: 'donut',
-              61: 'cake', 62: 'chair', 63: 'couch', 64: 'potted plant', 65: 'bed',
-              67: 'dining table', 70: 'toilet', 72: 'tv', 73: 'laptop', 74: 'mouse',
-              75: 'remote', 76: 'keyboard', 77: 'cell phone', 78: 'microwave', 79: 'oven',
-              80: 'toaster', 81: 'sink', 82: 'refrigerator', 84: 'book', 85: 'clock',
-              86: 'vase', 87: 'scissors', 88: 'teddy bear', 89: 'hair drier', 90: 'toothbrush'}
+classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6', 6: 'match7',
+              7: 'match8', 8: 'match9', 9: 'match10', 10: 'match12', 11: 'match13',
+              12: 'match14', 13: 'match15', 14: 'match16', 15: 'match17', 16: 'match18',
+              17: 'match19', 18: 'match20', 19: 'match21', 20: 'match23', 21: 'match24', 22: 'match25',
+              23: 'match26', 24: 'match27', 25: 'match28', 26: 'match29', 27: 'match30',
+              28: 'match31', 29: 'match32', 30: 'match33', 31: 'match34', 32: 'match35',
+              33: 'match36', 34: 'match37', 35: 'match38', 36: 'match39',
+              37: 'match40', 38: 'match42', 39: 'match43', 40: 'match44',
+              41: 'match45', 42: 'match46', 43: 'match47', 44: 'match48', 45: 'match49',
+              46: 'match51', 47: 'match53', 48: 'match54', 49: 'match55', 50: 'match56',
+              51: 'match57', 52: 'match58', 53: 'match59', 54: 'match60', 55: 'match61',
+              56: 'match62', 57: 'match63', 58: 'match64', 59: 'match65', 60: 'match66',
+              61: 'match67', 62: 'match68', 63: 'match69', 64: 'match70', 65: 'match71',
+              66: 'match72', 67: 'match73', 68: 'match74', 69: 'match75', 70: 'match76',
+              71: 'match77', 72: 'match78', 73: 'match79', 74: 'match80', 75: 'match81',
+              76: 'match82', 77: 'match83', 78: 'match84', 79: 'match85',80: 'match86',
+              81: 'match87', 82: 'match88', 83: 'match89', 84: 'match90', 85: 'match91',
+              86: 'match92', 87:'match93', 88: 'match94', 89:'match95'}
 
 
 class Detector:
     def __init__(self):
         global cvNet
-        cvNet = cv.dnn.readNetFromTensorflow('model/frozen_inference_graph.pb',
-                                             'model/labelmap.pbtxt')
+        cvNet = cv.dnn.readNetFromTensorflow('/Users/DELL LAPTOP/modelstf/research/object_detection/herokuobjectdetection-master/modelmodel/frozen_inference_graph.pb',
+                                             '/Users/DELL LAPTOP/modelstf/research/object_detection/herokuobjectdetection-master/modelmodel/frozen_inference_graph.pbtxt')
 
     def detectObject(self, imName):
         img = cv.cvtColor(numpy.array(imName), cv.COLOR_BGR2RGB)
+        #img = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
         cvNet.setInput(cv.dnn.blobFromImage(img, 0.007843, (300, 300), (127.5, 127.5, 127.5), swapRB=True, crop=False))
         detections = cvNet.forward()
         cols = img.shape[1]
@@ -48,9 +50,8 @@ class Detector:
                              (0, 0, 255))
                 if class_id in classNames:
                     label = classNames[class_id] + ": " + str(confidence)
-                    labelSize, baseLine = cv.getTextSize(label, cv.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    labelSize, baseLine = cv.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
                     yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-
-        img = cv.imencode('.jpg', img)[1].tobytes()
-        return img
+                    cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+                     img = cv.imencode('.jpg', img)[1].tobytes()
+                      return img
