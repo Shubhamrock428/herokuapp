@@ -4,7 +4,7 @@ import numpy
 
 classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6',
               6: 'match7', 7: 'match8', 8: 'match9', 9: 'match10', 10: 'match12',
-              11:'match13', 12: 'match14', 13: 'match15', 14: 'match16', 15: 'match17',
+              11: 'match13', 12: 'match14', 13: 'match15', 14: 'match16', 15: 'match17',
               16: 'match18', 17: 'match19', 18: 'match20', 19: 'match21', 20: 'match23', 
               21: 'match24', 22: 'match25', 23: 'match26', 24: 'match27', 25: 'match28',
               26: 'match29', 27: 'match30', 28: 'match31', 29: 'match32', 30: 'match33',
@@ -31,7 +31,8 @@ class Detector:
     def detectObject(self, imName):
         img = cv.cvtColor(numpy.array(imName), cv.COLOR_BGR2RGB)
         #img = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
-        cvNet.setInput(cv.dnn.blobFromImage(img, 0.007843, (300, 300), (127.5, 127.5, 127.5), swapRB=True, crop=False))
+        cvNet.setInput(cv.dnn.blobFromImage(img, 0.007843, (300, 300), (127.5, 127.5, 127.5),
+                                            swapRB=True, crop=False))
         detections = cvNet.forward()
         cols = img.shape[1]
         rows = img.shape[0]
@@ -39,19 +40,20 @@ class Detector:
         for i in range(detections.shape[2]):
             confidence = detections[0, 0, i, 2]
             if confidence > 0.5:
-                class_id = int(detections[0, 0, i, 1])
+              
+              class_id = int(detections[0, 0, i, 1])
+              xLeftBottom = int(detections[0, 0, i, 3] * cols)
+              yLeftBottom = int(detections[0, 0, i, 4] * rows)
+              xRightTop = int(detections[0, 0, i, 5] * cols)
+              yRightTop = int(detections[0, 0, i, 6] * rows)
 
-                xLeftBottom = int(detections[0, 0, i, 3] * cols)
-                yLeftBottom = int(detections[0, 0, i, 4] * rows)
-                xRightTop = int(detections[0, 0, i, 5] * cols)
-                yRightTop = int(detections[0, 0, i, 6] * rows)
-
-                cv.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),(0, 0, 255))
-                if class_id in classNames:
-                    label = classNames[class_id] + ": " + str(confidence)
-                    labelSize, baseLine = cv.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-                    yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+              cv.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),(0, 0, 255))
+              if class_id in classNames:
+                
+                label = classNames[class_id] + ": " + str(confidence)
+                labelSize, baseLine = cv.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                yLeftBottom = max(yLeftBottom, labelSize[1])
+                cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
                     
           img = cv.imencode('.jpg', img)[1].tobytes()
           return img
