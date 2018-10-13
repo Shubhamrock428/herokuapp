@@ -1,4 +1,4 @@
-import cv2 as cv
+import cv2 
 import numpy
 
 
@@ -25,15 +25,15 @@ classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6',
 class Detector:
     def __init__(self):
         global cvNet
-        cvNet = cv.dnn.readNetFromTensorflow('/model/frozen_inference_graph.pb',
+        cv2Net = cv2.dnn.readNetFromTensorflow('/model/frozen_inference_graph.pb',
                                              '/model/graph.pbtxt')
 
     def detectObject(self, imName):
-        img = cv.cvtColor(numpy.array(imName), cv.COLOR_BGR2RGB)
+        img = cv2.cvtColor(numpy.array(imName), cv2.COLOR_BGR2RGB)
         
-        cvNet.setInput(cv.dnn.blobFromImage(img, 0.007843, (300, 300), (127.5, 127.5, 127.5),
+        cv2Net.setInput(cv2.dnn.blobFromImage(img, 0.007843, (300, 300), (127.5, 127.5, 127.5),
                                             swapRB=True, crop=False))
-        detections = cvNet.forward()
+        detections = cv2Net.forward()
         cols = img.shape[1]
         rows = img.shape[0]
 
@@ -48,13 +48,13 @@ class Detector:
                 xRightTop = int(detections[0, 0, i, 5] * cols)
                 yRightTop = int(detections[0, 0, i, 6] * rows)
 
-                cv.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
+                cv2.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
                              (0, 0, 255))
                 if class_id in classNames:
                     label = classNames[class_id] + ": " + str(confidence)
-                    labelSize, baseLine = cv.getTextSize(label, cv.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
                     yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+                    cv2.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
 
-        img = cv.imencode('.jpg', img)[1].tobytes()
+        img = cv2.imencode('.jpg', img)[1].tobytes()
         return img
