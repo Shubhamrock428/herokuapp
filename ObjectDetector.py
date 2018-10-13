@@ -2,14 +2,14 @@ import cv2 as cv
 import numpy
 
 
-classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6', 6: 'match7',
-              7: 'match8', 8: 'match9', 9: 'match10', 10: 'match12', 11: 'match13',
-              12: 'match14', 13: 'match15', 14: 'match16', 15: 'match17', 16: 'match18',
-              17: 'match19', 18: 'match20', 19: 'match21', 20: 'match23', 21: 'match24', 22: 'match25',
-              23: 'match26', 24: 'match27', 25: 'match28', 26: 'match29', 27: 'match30',
-              28: 'match31', 29: 'match32', 30: 'match33', 31: 'match34', 32: 'match35',
-              33: 'match36', 34: 'match37', 35: 'match38', 36: 'match39',
-              37: 'match40', 38: 'match42', 39: 'match43', 40: 'match44',
+classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6',
+              6: 'match7',7: 'match8', 8: 'match9', 9: 'match10', 10: 'match12',
+              11:'match13',12: 'match14', 13: 'match15', 14: 'match16', 15: 'match17',
+              16: 'match18',17: 'match19', 18: 'match20', 19: 'match21', 20: 'match23', 
+              21: 'match24', 22: 'match25',23: 'match26', 24: 'match27', 25: 'match28',
+              26: 'match29', 27: 'match30',28: 'match31', 29: 'match32', 30: 'match33',
+              31: 'match34', 32: 'match35',33: 'match36', 34: 'match37', 35: 'match38', 
+              36: 'match39',37: 'match40', 38: 'match42', 39: 'match43', 40: 'match44',
               41: 'match45', 42: 'match46', 43: 'match47', 44: 'match48', 45: 'match49',
               46: 'match51', 47: 'match53', 48: 'match54', 49: 'match55', 50: 'match56',
               51: 'match57', 52: 'match58', 53: 'match59', 54: 'match60', 55: 'match61',
