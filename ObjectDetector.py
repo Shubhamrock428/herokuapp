@@ -41,7 +41,7 @@ class Detector:
             confidence = detections[0, 0, i, 2]
             if confidence > 0.5:
               
-               class_id = int(detections[0, 0, i, 1])
+                class_id = int(detections[0, 0, i, 1])
 
                 xLeftBottom = int(detections[0, 0, i, 3] * cols)
                 yLeftBottom = int(detections[0, 0, i, 4] * rows)
