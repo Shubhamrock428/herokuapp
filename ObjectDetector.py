@@ -54,6 +54,5 @@ class Detector:
                 labelSize, baseLine = cv.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
                 yLeftBottom = max(yLeftBottom, labelSize[1])
                 cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-                    
-          img = cv.imencode('.jpg', img)[1].tobytes()
-          return img
+                img = cv.imencode('.jpg', img)[1].tobytes()
+                return img
