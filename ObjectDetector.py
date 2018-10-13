@@ -25,8 +25,8 @@ classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6', 6
 class Detector:
     def __init__(self):
         global cvNet
-        cvNet = cv.dnn.readNetFromTensorflow('/Users/DELL LAPTOP/modelstf/research/object_detection/herokuobjectdetection-master/modelmodel/frozen_inference_graph.pb',
-                                             '/Users/DELL LAPTOP/modelstf/research/object_detection/herokuobjectdetection-master/modelmodel/frozen_inference_graph.pbtxt')
+        cvNet = cv.dnn.readNetFromTensorflow('/model/frozen_inference_graph.pb',
+                                             '/model/frozen_inference_graph.pbtxt')
 
     def detectObject(self, imName):
         img = cv.cvtColor(numpy.array(imName), cv.COLOR_BGR2RGB)
