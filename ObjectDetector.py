@@ -26,7 +26,7 @@ class Detector:
     def __init__(self):
         global cvNet
         cv2Net = cv2.dnn.readNetFromTensorflow('model/frozen_inference_graph.pb',
-                                               'model/graph.pbtxt')
+                                               'model/frozen_inference_graph.pbtxt')
 
     def detectObject(self, imName):
         img = cv2.cvtColor(numpy.array(imName), cv2.COLOR_BGR2RGB)
