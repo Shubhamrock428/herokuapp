@@ -2,4 +2,4 @@ opencv-python
 numpy
 flask
 pillow
-gunicorn
+gunicorn>=19.0.0
