@@ -1,1 +1,5 @@
+gunicorn
+opencv-python
+flask
+pillow
 
