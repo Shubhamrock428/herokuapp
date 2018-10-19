@@ -1,4 +1,4 @@
-import cv2 
+import cv2 as cv
 import numpy
 
 
@@ -24,15 +24,15 @@ classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6',
 
 class Detector:
     def __init__(self):
-        global cv2Net
-        cv2Net = cv2.dnn.readNetFromTensorflow('model/frozen_inference_graph.pb',
+        global cvNet
+        cvNet = cv.dnn.readNetFromTensorflow('model/frozen_inference_graph.pb',
                                                'model/labelmap.pbtxt')
 
     def detectObject(self, imName):
-        img = cv2.cvtColor(numpy.array(imName), cv2.COLOR_BGR2RGB)
+        img = cv.cvtColor(numpy.array(imName), cv.COLOR_BGR2RGB)
         #img = cv2.imread(numpy.array["imame"], cv2.IMREAD_GRAYSCALE)
-        cv2Net.setInput(cv2.dnn.blobFromImage(img, 0.007843,(300,300), (127.5, 127.5, 127.5),swapRB=True, crop=False))
-        detections = cv2Net.forward()
+        cvNet.setInput(cv.dnn.blobFromImage(img, 0.007843,(300,300), (127.5, 127.5, 127.5),swapRB=True, crop=False))
+        detections = cvNet.forward()
         cols = img.shape[1]
         rows = img.shape[0]
 
@@ -47,13 +47,13 @@ class Detector:
                 xRightTop = int(detections[0, 0, i, 5] * cols)
                 yRightTop = int(detections[0, 0, i, 6] * rows)
 
-                cv2.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
+                cv.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
                              (0, 0, 255))
                 if class_id in classNames:
                     label = classNames[class_id] + ": " + str(confidence)
-                    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    labelSize, baseLine = cv.getTextSize(label, cv.FONT_HERSHEY_SIMPLEX, 0.5, 1)
                     yLeftBottom = max(yLeftBottom, labelSize[1])
-                    cv2.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+                    cv.putText(img, label, (xLeftBottom+5, yLeftBottom), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
 
-        img = cv2.imencode('.jpg', img)[1].tobytes()
+        img = cv.imencode('.jpg', img)[1].tobytes()
         return img
