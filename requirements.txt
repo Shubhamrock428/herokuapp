@@ -4,3 +4,4 @@ pillow
 flask
 tensorflow
 utils
+matplotlib
