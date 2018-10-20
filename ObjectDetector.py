@@ -48,7 +48,7 @@ PATH_TO_IMAGE = os.path.join(CWD_PATH)
 
 # Number of classes the object detector can identify
 NUM_CLASSES = 89
-
+def detectobject():
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
 # network predicts `5`, we know that this corresponds to `king`.
