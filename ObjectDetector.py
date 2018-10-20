@@ -1,120 +1,60 @@
-######## Image Object Detection Using Tensorflow-trained Classifier #########
-#
-# Author: Evan Juras
-# Date: 1/15/18
-# Description: 
-# This program uses a TensorFlow-trained classifier to perform object detection.
-# It loads the classifier uses it to perform object detection on an image.
-# It draws boxes and scores around the objects of interest in the image.
+import cv2 
+import numpy
 
-## Some of the code is copied from Google's example at
-## https://github.com/tensorflow/models/blob/master/research/object_detection/object_detection_tutorial.ipynb
 
-## and some is copied from Dat Tran's example at
-## https://github.com/datitran/object_detector_app/blob/master/object_detection_app.py
+classNames = {1: 'match2', 2: 'match3', 3: 'match4', 4: 'match5', 5: 'match6',
+              6: 'match7', 7: 'match8', 8: 'match9', 9: 'match10', 10: 'match12',
+              11: 'match13', 12: 'match14', 13: 'match15', 14: 'match16', 15: 'match17',
+              16: 'match18', 17: 'match19', 18: 'match20', 19: 'match21', 20: 'match23', 
+              21: 'match24', 22: 'match25', 23: 'match26', 24: 'match27', 25: 'match28',
+              26: 'match29', 27: 'match30', 28: 'match31', 29: 'match32', 30: 'match33',
+              31: 'match34', 32: 'match35', 33: 'match36', 34: 'match37', 35: 'match38', 
+              36: 'match39', 37: 'match40', 38: 'match42', 39: 'match43', 40: 'match44',
+              41: 'match45', 42: 'match46', 43: 'match47', 44: 'match48', 45: 'match49',
+              46: 'match51', 47: 'match53', 48: 'match54', 49: 'match55', 50: 'match56',
+              51: 'match57', 52: 'match58', 53: 'match59', 54: 'match60', 55: 'match61',
+              56: 'match62', 57: 'match63', 58: 'match64', 59: 'match65', 60: 'match66',
+              61: 'match67', 62: 'match68', 63: 'match69', 64: 'match70', 65: 'match71',
+              66: 'match72', 67: 'match73', 68: 'match74', 69: 'match75', 70: 'match76',
+              71: 'match77', 72: 'match78', 73: 'match79', 74: 'match80', 75: 'match81',
+              76: 'match82', 77: 'match83', 78: 'match84', 79: 'match85', 80: 'match86',
+              81: 'match87', 82: 'match88', 83: 'match89', 84: 'match90', 85: 'match91',
+              86: 'match92', 87: 'match93', 88: 'match94', 89: 'match95'}
 
-## but I changed it to make it more understandable to me.
 
-# Import packages
-import os
-import cv2
-import numpy as np
-import tensorflow as tf
-import sys
+class Detector:
+    def __init__(self):
+        global cv2Net
+        cv2Net = cv2.dnn.readNetFromTensorflow('model/frozen_inference_graph.pb',
+                                              'model/graph.pbtxt')
 
-# This is needed since the notebook is stored in the object_detection folder.
-sys.path.append("..")
+    def detectObject(self, imName):
+        img = cv2.cvtColor(numpy.array(imName), cv2.COLOR_BGR2RGB)
+        
+        cv2Net.setInput(cv2.dnn.blobFromImage(img, 0.007843, (300, 300), (127.5, 127.5, 127.5),
+                                            swapRB=True, crop=False))
+        detections = cv2Net.forward()
+        cols = img.shape[1]
+        rows = img.shape[0]
 
-# Import utilites
-from utils import label_map_util
-from utils import visualization_utils as vis_util
+        for i in range(detections.shape[2]):
+            confidence = detections[0, 0, i, 2]
+            if confidence > 0.5:
+              
+                class_id = int(detections[0, 0, i, 1])
 
-# Name of the directory containing the object detection module we're using
-MODEL_NAME = 'model'
-#IMAGE_NAME = 'test4.jpg'
+                xLeftBottom = int(detections[0, 0, i, 3] * cols)
+                yLeftBottom = int(detections[0, 0, i, 4] * rows)
+                xRightTop = int(detections[0, 0, i, 5] * cols)
+                yRightTop = int(detections[0, 0, i, 6] * rows)
 
-# Grab path to current working directory
-CWD_PATH = os.getcwd()
+                cv2.rectangle(img, (xLeftBottom, yLeftBottom), (xRightTop, yRightTop),
+                             (0, 0, 255))
+                if class_id in classNames:
+                    label = classNames[class_id] + ": " + str(confidence)
+                    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    yLeftBottom = max(yLeftBottom, labelSize[1])
+                    cv2.putText(img, label, (xLeftBottom+5, yLeftBottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
 
-# Path to frozen detection graph .pb file, which contains the model that is used
-# for object detection.
-PATH_TO_CKPT = os.path.join(CWD_PATH,MODEL_NAME,'frozen_inference_graph.pb')
-
-# Path to label map file
-PATH_TO_LABELS = os.path.join(CWD_PATH,'model','labelmap.pbtxt')
-
-# Path to image
-PATH_TO_IMAGE = os.path.join(CWD_PATH)
-
-# Number of classes the object detector can identify
-NUM_CLASSES = 89
-
-# Load the label map.
-# Label maps map indices to category names, so that when our convolution
-# network predicts `5`, we know that this corresponds to `king`.
-# Here we use internal utility functions, but anything that returns a
-# dictionary mapping integers to appropriate string labels would be fine
-label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
-categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
-
-category_index = label_map_util.create_category_index(categories)
-
-# Load the Tensorflow model into memory.
-detection_graph = tf.Graph()
-with detection_graph.as_default():
-    od_graph_def = tf.GraphDef()
-    with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
-        serialized_graph = fid.read()
-        od_graph_def.ParseFromString(serialized_graph)
-        tf.import_graph_def(od_graph_def, name='')
-
-    sess = tf.Session(graph=detection_graph)
-
-# Define input and output tensors (i.e. data) for the object detection classifier
-
-# Input tensor is the image
-image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
-
-# Output tensors are the detection boxes, scores, and classes
-# Each box represents a part of the image where a particular object was detected
-detection_boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
-
-# Each score represents level of confidence for each of the objects.
-# The score is shown on the result image, together with the class label.
-detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
-detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
-
-# Number of objects detected
-num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-
-# Load image using OpenCV and
-# expand image dimensions to have shape: [1, None, None, 3]
-# i.e. a single-column array, where each item in the column has the pixel RGB value
-image = cv2.imread(PATH_TO_IMAGE)
-image_expanded = np.expand_dims(image, axis=0)
-
-# Perform the actual detection by running the model with the image as input
-(boxes, scores, classes, num) = sess.run(
-    [detection_boxes, detection_scores, detection_classes, num_detections],
-    feed_dict={image_tensor: image_expanded})
-
-# Draw the results of the detection (aka 'visulaize the results')
-
-vis_util.visualize_boxes_and_labels_on_image_array(
-    image,
-    np.squeeze(boxes),
-    np.squeeze(classes).astype(np.int32),
-    np.squeeze(scores),
-    category_index,
-    use_normalized_coordinates=True,
-    line_thickness=8,
-    min_score_thresh=0.80)
-
-# All the results have been drawn on image. Now display the image.
-cv2.imshow('Object detector', image)
-
-# Press any key to close the image
-cv2.waitKey(0)
-
-# Clean up
-cv2.destroyAllWindows()
+        img = cv2.imencode('.jpg', img)[1].tobytes()
+        return img
