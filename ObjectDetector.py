@@ -48,7 +48,6 @@ PATH_TO_IMAGE = os.path.join(CWD_PATH)
 
 # Number of classes the object detector can identify
 NUM_CLASSES = 89
-def detectobject():
 # Load the label map.
 # Label maps map indices to category names, so that when our convolution
 # network predicts `5`, we know that this corresponds to `king`.
@@ -70,7 +69,7 @@ with detection_graph.as_default():
     sess = tf.Session(graph=detection_graph)
 
 # Define input and output tensors (i.e. data) for the object detection classifier
-
+def detectobject(self):
 # Input tensor is the image
 image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
 
