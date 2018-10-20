@@ -31,7 +31,7 @@ class Detector:
     def detectObject(self, imName):
         img = cv.cvtColor(numpy.array(imName), cv.COLOR_BGR2RGB)
         #img = cv.imread(numpy.array["imame"], cv.IMREAD_GRAYSCALE)
-        cvNet.setInput(cv.dnn.blobFromImage(img, size=(89,89), swapRB=True, crop=False))
+        cvNet.setInput(cv.dnn.blobFromImage(cv.resize(img,(89,89)), swapRB=True, crop=False))
         detections = cvNet.forward()
         cols = img.shape[1]
         rows = img.shape[0]
