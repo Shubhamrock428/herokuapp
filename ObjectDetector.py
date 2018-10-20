@@ -29,7 +29,7 @@ class Detector:
                                                'model/labelmap.pbtxt')
 
     def detectObject(self, imName):
-        img = cv2.cvtColor(numpy.array(imName), cv2.COLOR_BGR2RGB)
+        img = cv2.imread(numpy.array(imName), cv2.IMREAD_GRAYSCALE)
         
         cv2Net.setInput(cv2.dnn.blobFromImage(img,1, (300, 300), (127.5, 127.5, 127.5),swapRB=True, crop=False))
         detections = cv2Net.forward()
