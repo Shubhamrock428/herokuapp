@@ -2,3 +2,5 @@ gunicorn
 opencv-python
 pillow
 flask
+tensorflow
+utils
